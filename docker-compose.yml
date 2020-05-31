@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  samba:
+    container_name: docker_samba
+    tty: true
+    # Name of your pc
+    hostname: HP
+    network_mode: host
+    build:
+      context: .
+      shm_size: '100mb'
+      dockerfile: Dockerfile
+    volumes:
+      - /home/${USER}/SMB/:/media/SMB:rw
+      - /home/${USER}/:/media/HOME:rw
+      - /media/${USER}/HD:/media/HD:rw
+      - /home/${USER}/RetroPie/roms:/media/roms:rw
+      - /home/${USER}/RetroPie/BIOS:/media/BIOS:rw
+      - /opt/retropie/configs:/media/configs:rw
+      - /home/${USER}/RetroPie/splashscreens:/media/splashscreens:rw
