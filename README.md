@@ -36,8 +36,8 @@ You need to edit the folders and volumes that will be mounted in the container.
 
 ``` 
 volumes:
-  - /home/${USER}/SMB/:/media/SMB:rw
-  - /home/${USER}/:/media/HOME:rw
+  - /home/luiz/SMB/:/media/SMB:rw
+  - /home/luiz/:/media/HOME:rw
 ```
 The structure of volumes is:
  `folder_in_host:folder_in_conteiner:rw`
@@ -48,7 +48,7 @@ You need to setup the folders you want to share based on folders you previous se
 
 On docker-compose.yml volume:
 ```
-  - /home/${USER}/SMB/:/media/SMB:rw
+  - /home/luiz/SMB/:/media/SMB:rw
 ```
 
 In smb.conf:
