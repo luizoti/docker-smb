@@ -1,14 +1,16 @@
+# https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
+
 FROM alpine:3.10
 
 # Your system user
 ARG USER='luiz'
 # SMB and SYSTEM password
 ARG PASS='smbpass'
-
+ARG VERSION='4.11.8'
 RUN apk add --no-cache --update \
-    samba-common-tools \
-    samba-client \
-    samba-server
+    'samba-common-tools<${VERSION}' \
+    'samba-client<${VERSION}' \
+    'samba-server<${VERSION}'
 
 RUN apk add --no-cache --update sudo   # If your base image does not contain sudo.
 RUN adduser -D -s /bin/ash -u 1000 ${USER} && addgroup ${USER} root  # Grant sudo to the user
