@@ -67,4 +67,4 @@ What does this script do?
 
 Download the `install-samba.sh` script, and launch it:
 
-```wget "https://raw.githubusercontent.com/luizoti/docker-smb/master/install-samba.sh" && sudo chmod +x ./install-samba.sh && sudo ./install-samba.sh -i```
+```wget -P '/tmp/' "https://raw.githubusercontent.com/luizoti/docker-smb/master/install-samba.sh" && sudo chmod +x /tmp/install-samba.sh && sudo /tmp/install-samba.sh -i```
