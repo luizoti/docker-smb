@@ -28,7 +28,7 @@ Alpine is a good choice because both the base image and the final image after in
 
 Download the `install-samba.sh` script, and launch it:
 
-```wget -O- "https://raw.githubusercontent.com/luizoti/docker-smb/master/install-samba.sh" | sudo bash```
+```wget "https://raw.githubusercontent.com/luizoti/docker-smb/master/install-samba.sh" && sudo chmod +x ./install-samba.sh && sudo ./install-samba.sh -i```
 
 # docker-compose.yml
 
