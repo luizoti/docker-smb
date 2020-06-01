@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   samba:
-    container_name: docker_samba
+    container_name: docker_smb
     tty: true
     # Name of your pc
     hostname: HP
@@ -12,10 +12,10 @@ services:
       shm_size: '100mb'
       dockerfile: Dockerfile
     volumes:
-      - /home/luiz/SMB/:/media/SMB:rw
-      - /home/luiz/:/media/HOME:rw
-      - /media/luiz/HD:/media/HD:rw
-      - /home/luiz/RetroPie/roms:/media/roms:rw
-      - /home/luiz/RetroPie/BIOS:/media/BIOS:rw
+      - /home/${USER}/SMB/:/media/SMB:rw
+      - /home/${USER}/:/media/HOME:rw
+      - /media/${USER}/HD:/media/HD:rw
+      - /home/${USER}/RetroPie/roms:/media/roms:rw
+      - /home/${USER}/RetroPie/BIOS:/media/BIOS:rw
       - /opt/retropie/configs:/media/configs:rw
-      - /home/luiz/RetroPie/splashscreens:/media/splashscreens:rw
+      - /home/${USER}/RetroPie/splashscreens:/media/splashscreens:rw
