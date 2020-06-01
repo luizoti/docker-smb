@@ -98,6 +98,7 @@ function change_userpass () {
 			fi
 
 			if [[ ${VAR} == *"PASS"* ]]; then
+				echo
 				echo "Insira uma senha para o usuario do sistema e SMB:"
 				read -s NEWPASS
 				sed -i "s/PASS='.*'/PASS='${NEWPASS}'/g" ${CLONE_DIR}/Dockerfile
@@ -109,21 +110,23 @@ function change_userpass () {
 function smbcfg () {
 	SMBCFG='/etc/samba/smb.conf'
 	if [[ -f ${SMBCFG} ]]; then
+		echo
 		read -p "Copiar e usar a configuração contida em: ${SMBCFG} (y/n)? " CHOICE
 
 		case "${CHOICE}" in 
 		  y|Y )
 			if cp ${SMBCFG} ${CLONE_DIR}/smb.conf; then
-				echo "Configuração de ${SMBCFG}, copiada!"
+				echo "	Configuração de ${SMBCFG}, copiada!"
 			else
-				echo "Erro ao copiar ${SMBCFG} para ${CLONE_DIR}/smb.conf!"
+				echo "	Erro ao copiar ${SMBCFG} para ${CLONE_DIR}/smb.conf!"
 			fi
 			;;
 		  n|N )
-			echo "Será usada a configuração do repositorio!"
+			echo "	Será usada a configuração do repositorio!"
 			;;
 		  * ) 
-			echo "Invalid."
+			echo "	Invalid."
+			smbcfg
 			;;
 		esac
 	fi
@@ -160,6 +163,26 @@ WantedBy=multi-user.target" > ${SERVICE}
 	fi
 }
 
+function waitedit () {
+	echo
+	echo
+	echo 'PARA FINALIZAR O PROCESSO VOCÊ PRECISA EDITAR OS "COMPARTILHAMENTOS SMB" E OS "VOLUMES" NOS AQUIVOS:'
+	echo '	docker-compose.yml'
+	echo '	smb.conf'
+	echo 
+	read -p "Ao finalizar, presione Y para continuar ou N para sair (y/n)" EDITCHOICE
+
+	case "${EDITCHOICE}" in 
+	  y|Y )
+		echo
+		build
+		;;
+	  n|N )
+		echo
+		echo "Saindo, processo não finalizado."
+		;;
+	esac
+}
 
 case $1 in
 	-a|-A|--auto )
@@ -178,6 +201,6 @@ case $1 in
 		change_smbuser
 		change_userpass
 		smbcfg
-		build
+		waitedit
 		;;
 esac
