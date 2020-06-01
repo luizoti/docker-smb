@@ -2,6 +2,12 @@
 
 Can be used to quick setup a simple Samba container in host network mode. It will run as if on host, so it can be accessed from other computers on the same network.
 
+# Newbie info?!
+
+`Host` refers to the system installed on your machine.
+
+`Container` refers to the container created by the docker.
+
 # Motivation
 
 After the `Ubuntu/Kubuntu 20.04` update, samba was updated to versions `4.11.+` , In version `4.11.0` support for SMB1 was removed, look [here](https://www.samba.org/samba/history/samba-4.11.0.html).
@@ -18,18 +24,6 @@ Alpine is a good choice because both the base image and the final image after in
 
 ![alt text](https://github.com/luizoti/docker-smb/blob/master/Screenshot_20200531_161811.png "sizes reference")
 
-# Newbie info?!
-
-`Host` refers to the system installed on your machine.
-
-`Container` refers to the container created by the docker
-
-# Installation
-
-Download the `install-samba.sh` script, and launch it:
-
-```wget "https://raw.githubusercontent.com/luizoti/docker-smb/master/install-samba.sh" && sudo chmod +x ./install-samba.sh && sudo ./install-samba.sh -i```
-
 # docker-compose.yml
 
 You need to edit the folders and volumes that will be mounted in the container.
@@ -42,7 +36,7 @@ volumes:
 The structure of volumes is:
  `folder_in_host:folder_in_conteiner:rw`
  
- # smb.conf
+# smb.conf
 
 You need to setup the folders you want to share based on folders you previous setup in docker-compose.yml
 
@@ -58,9 +52,9 @@ In smb.conf:
     path = "/media/SMB"
 
 ```
-_____________________________________________________________________________________________________________________________
+# Installation
 
-I tried to make this script as easy to use as possible.
+#### I tried to make this script as simple as possible, but you still need the mount points and SMB shares manually.
 
 What does this script do?
 1. Install dependencies: git, curl docker, docker-compose e etc.
@@ -68,3 +62,9 @@ What does this script do?
 3. Change user usarname, password, hostname and workdir in `docker-compose.yml`, `Dockerfile`, `docker-smb.service` and `smb.conf` based on host information, all this information, except the password is extracted directly from the system, the password is requested during installation.
 4. Check if you want to use old `smb.conf` of your host or use repo config.
 5. Install service.
+
+# Run
+
+Download the `install-samba.sh` script, and launch it:
+
+```wget "https://raw.githubusercontent.com/luizoti/docker-smb/master/install-samba.sh" && sudo chmod +x ./install-samba.sh && sudo ./install-samba.sh -i```
