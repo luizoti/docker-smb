@@ -6,26 +6,35 @@
 USERNAME=$(id -un 1000)
 CLONE_DIR=/home/${USERNAME}/.docker-smb
 
-# function update () {
-#   sudo apt-get update 
-#   sudo apt-get upgrade -y
-# }
+CLONE_SMB_CONF="${CLONE_DIR}/smb.conf"
+CLONE_COMPOSE_CONF="${CLONE_DIR}/docker-compose.yml"
+CLONE_DOCKER_FILE="${CLONE_DIR}/Dockerfile"
+function update () {
+  sudo apt-get update 
+  sudo apt-get upgrade -y
+}
 
-# if [[ ! $(which curl) ]]; then
-#   sudo apt install curl -y
-# fi
+if [[ ! $(which curl) ]]; then
+  sudo apt install curl -y
+fi
 
-# if [[ ! $(which git) ]]; then
-#   sudo apt install git -y
-# fi
+if [[ ! $(which git) ]]; then
+  sudo apt install git -y
+fi
 
-# if [[ ! -d "${CLONE_DIR}" ]]; then
-#   git clone https://github.com/luizoti/docker-smb.git "${CLONE_DIR}"
-#   echo
-#   cd "${CLONE_DIR}"
-# fi
+if [[ ! -d "${CLONE_DIR}" ]]; then
+    clear
+    echo
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+    echo " #                           Cloning docker-smb Repository                             # "
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+  git clone https://github.com/luizoti/docker-smb.git "${CLONE_DIR}"
+  echo
+  cd "${CLONE_DIR}"
+fi
 
 if [[ ! $(which docker-compose) ]]; then
+    clear
     echo
     echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
     echo " #                           docker-compose instalation                                # "
@@ -73,6 +82,7 @@ if [[ ! $(which docker-compose) ]]; then
 fi
 
 if [[ ! $(which docker) ]]; then
+    clear
     echo
     echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
     echo " #                           docker engine instalation                                 # "
@@ -80,7 +90,7 @@ if [[ ! $(which docker) ]]; then
     echo " #                           Instalation based in docs                                 # "
     echo " #                     https://docs.docker.com/engine/install/                         # "
     echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
-
+    echo
     sudo apt-get update
     sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
     # 
@@ -99,134 +109,167 @@ if [[ ! $(which docker) ]]; then
 fi
 
 function change_hostname () {
-  if [[ -f "${CLONE_DIR}/docker-compose.yml" ]]; then
-      sed -i "s/hostname: .*/hostname: $(hostname)/g" "${CLONE_DIR}/docker-compose.yml"
-  fi
+    clear
+    echo
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+    echo " #                              Changing Hostname                                      # "
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+    if [[ -f "${CLONE_COMPOSE_CONF}" ]]; then
+        sed -i "s/hostname: .*/hostname: $(hostname)/g" "${CLONE_COMPOSE_CONF}"
+    fi
 
-  if [[ -f "${CLONE_DIR}/smb.conf" ]]; then
-      sed -i "s/netbios name = .*/netbios name = $(hostname)/g" "${CLONE_DIR}/smb.conf"
+    if [[ -f "${CLONE_SMB_CONF}" ]]; then
+        sed -i "s/netbios name = .*/netbios name = $(hostname)/g" "${CLONE_COMPOSE_CONF}"
+    fi
+}
+
+function change_smbuser () {
+    clear
+    echo
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+    echo " #                            Changing smbconf user                                    # "
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+
+    if [[ -f "${CLONE_SMB_CONF}" ]]; then
+        sed -i "s/force user = .*/force user = ${USERNAME}/g" "${CLONE_SMB_CONF}"
+    fi
+}
+
+function change_userpass () {
+    clear
+    echo
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+    echo " #                             Changing smbconf pass                                   # "
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+
+    if [[ -f "${CLONE_DOCKER_FILE}" ]]; then
+        VARS=$(cat "${CLONE_DOCKER_FILE}" | grep ARG | sed "s/ARG//g")
+
+        for VAR in ${VARS}; do
+            if [[ "${VAR}" == *"USER"* ]]; then
+                sed -i "s/USER='.*'/USER='${USERNAME}'/g" "${CLONE_DOCKER_FILE}"
+            fi
+            
+            if [[ "${VAR}" == *"PASS"* ]]; then
+                echo
+                read -p "Enter a password for the system and SMB user: " -s NEWPASS
+                sed -i "s/PASS='.*'/PASS='${NEWPASS}'/g" "${CLONE_DOCKER_FILE}"
+            fi
+        done
+    fi
+}
+
+function smbcfg () {
+    clear
+    echo
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+    echo " #                                Changing smbconf                                     # "
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+
+    SMBCFG='/etc/samba/smb.conf'
+
+    if [[ -f "${SMBCFG}" ]]; then
+        echo
+        read -p "Copy and use the configuration contained in: ${SMBCFG} (y / n)? " CHOICE
+
+      case "${CHOICE}" in 
+        y|Y )
+          if cp "${SMBCFG}" "${CLONE_SMB_CONF}"; then
+              echo "    ${SMBCFG} configuration copied!"
+          else
+              echo "    Error copying ${SMBCFG} to ${CLONE_SMB_CONF}!"
+          fi
+          ;;
+        n|N )
+          echo "    The repository configuration will be used!"
+          ;;
+        * ) 
+          echo "  Invalid."
+          smbcfg
+          ;;
+      esac
   fi
 }
 
-# function change_smbuser () {
-#   if [[ -f ${CLONE_DIR}/smb.conf ]]; then
-#       sed -i "s/force user = .*/force user = ${USERNAME}/g" ${CLONE_DIR}/smb.conf
-#   fi
-# }
+function build () {
+    clear
+    echo
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
+    echo " #                          Start Docker Compose Build                                 # "
+    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
 
-# function change_userpass () {
-#   if [[ -f ${CLONE_DIR}/Dockerfile ]]; then
-#       VARS=$(cat ./Dockerfile | grep ARG | sed "s/ARG//g")
+    if [[ "${PWD}" == "${CLONE_DIR}" ]]; then
+        sudo docker-compose build
+    fi
 
-#       for VAR in ${VARS}; do
-#           if [[ ${VAR} == *"USER"* ]]; then
-#               sed -i "s/USER='.*'/USER='${USERNAME}'/g" ${CLONE_DIR}/Dockerfile
-#           fi
+    SERVICE='/etc/systemd/system/docker-smb.service'
 
-#           if [[ ${VAR} == *"PASS"* ]]; then
-#               echo
-#               echo "Insira uma senha para o usuario do sistema e SMB:"
-#               read -s NEWPASS
-#               sed -i "s/PASS='.*'/PASS='${NEWPASS}'/g" ${CLONE_DIR}/Dockerfile
-#           fi
-#       done
-#   fi
-# }
+    echo -e "[Unit]
+Description=Docker Samba Service
+Requires=docker.service
+After=docker.service
 
-# function smbcfg () {
-#   SMBCFG='/etc/samba/smb.conf'
-#   if [[ -f ${SMBCFG} ]]; then
-#       echo
-#       read -p "Copiar e usar a configuração contida em: ${SMBCFG} (y/n)? " CHOICE
+[Service]
+Type=oneshot
+User=root
+Group=root
+RemainAfterExit=yes
+WorkingDirectory=${CLONE_DIR}
+ExecStart=/usr/bin/sudo /usr/local/bin/docker-compose up -d
+ExecStop=/usr/bin/sudo /usr/local/bin/docker-compose down
+TimeoutStartSec=0
 
-#       case "${CHOICE}" in 
-#         y|Y )
-#           if cp ${SMBCFG} ${CLONE_DIR}/smb.conf; then
-#               echo "  Configuração de ${SMBCFG}, copiada!"
-#           else
-#               echo "  Erro ao copiar ${SMBCFG} para ${CLONE_DIR}/smb.conf!"
-#           fi
-#           ;;
-#         n|N )
-#           echo "  Será usada a configuração do repositorio!"
-#           ;;
-#         * ) 
-#           echo "  Invalid."
-#           smbcfg
-#           ;;
-#       esac
-#   fi
-# }
+[Install]
+WantedBy=multi-user.target" > "${SERVICE}"
 
-# function build () {
-    
-#   if [[ ${PWD} == ${CLONE_DIR} ]]; then
-#       sudo docker-compose build
-#   fi
+    if [[ -f "${SERVICE}" ]]; then
+        echo
+        echo "  The service ${SERVICE} was created!"
+        echo
+        sudo systemctl daemon-reload
+        sudo systemctl enable docker-smb.service
+        sudo systemctl restart docker-smb.service
+    fi
+}
 
-#   SERVICE='/etc/systemd/system/docker-smb.service'
+function waitedit () {
+    clear
+    echo
+    echo "TO FINISH THE PROCESS YOU NEED TO EDIT THE "SMB SHARES" AND "VOLUMES" IN THE FILES:"
+    echo "    ${CLONE_COMPOSE_CONF}"
+    echo "    ${CLONE_SMB_CONF}"
+    echo 
+    read -p "When finished, press Y to continue or N to exit (y/n): " EDITCHOICE
 
-#   echo -e "[Unit]
-# Description=Docker Samba Service
-# Requires=docker.service
-# After=docker.service
+    case "${EDITCHOICE}" in 
+        y|Y )
+            echo
+            build
+        ;;
+        n|N )
+            echo
+            echo "Leaving, process not finished."
+        ;;
+    esac
+}
 
-# [Service]
-# Type=oneshot
-# RemainAfterExit=yes
-# WorkingDirectory=${CLONE_DIR}
-# ExecStart=/usr/bin/sudo /usr/local/bin/docker-compose up -d
-# ExecStop=/usr/bin/sudo /usr/local/bin/docker-compose down
-# TimeoutStartSec=0
-
-# [Install]
-# WantedBy=multi-user.target" > ${SERVICE}
-
-#   if [[ -f ${SERVICE} ]]; then
-#       sudo systemctl daemon-reload
-#       sudo systemctl enable docker-smb.service
-#       sudo systemctl restart docker-smb.service
-#   fi
-# }
-
-# function waitedit () {
-#   echo
-#   echo
-#   echo 'PARA FINALIZAR O PROCESSO VOCÊ PRECISA EDITAR OS "COMPARTILHAMENTOS SMB" E OS "VOLUMES" NOS AQUIVOS:'
-#   echo '  docker-compose.yml'
-#   echo '  smb.conf'
-#   echo 
-#   read -p "Ao finalizar, presione Y para continuar ou N para sair (y/n)" EDITCHOICE
-
-#   case "${EDITCHOICE}" in 
-#     y|Y )
-#       echo
-#       build
-#       ;;
-#     n|N )
-#       echo
-#       echo "Saindo, processo não finalizado."
-#       ;;
-#   esac
-# }
-
-# case $1 in
-#   -a|-A|--auto )
-#       update
-#       echo "Essa opção é para instalação sem perguntas!"
-#       build
-#       ;;
-#   -h|-H|--help )
-#       echo ""
-#       echo "-i, -I, --install - Inicia a instalação"
-#       echo "-a, -A, --auto    - Instalação silenciosa caso as configurções estejam prontas." 
-#       ;;
-#   -i|-I|--install )
-#       update
-#       change_hostname
-#       change_smbuser
-#       change_userpass
-#       smbcfg
-#       waitedit
-#       ;;
-# esac
+case $1 in
+    -a|-A|--auto )
+        update
+        echo "This is the silent installation option!"
+        build
+    ;;
+    -h|-H|--help )
+        echo ""
+        echo "-i, -I, --install - Start the installation."
+        echo "-a, -A, --auto    - Silent installation (only if the files are already ready)" 
+    ;;
+    -i|-I|--install )
+        update
+        change_hostname
+        change_smbuser
+        change_userpass
+        smbcfg
+        waitedit
+    ;;
+esac
