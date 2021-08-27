@@ -1,3 +1,5 @@
+This repository needs to be updated, as soon as possible I will do it, but I think it should work.
+
 # docker-smb - Docker Standalone Samba Server
 
 Can be used to quick setup a simple Samba container in host network mode. It will run as if on host, so it can be accessed from other computers on the same network.
