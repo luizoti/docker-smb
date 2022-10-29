@@ -182,10 +182,10 @@ Type=oneshot
 User=root
 Group=root
 RemainAfterExit=yes
-WorkingDirectory=${CLONE_DIR}
-ExecStart=/usr/bin/sudo /usr/local/bin/docker-compose up -d
-ExecStop=/usr/bin/sudo /usr/local/bin/docker-compose down
-TimeoutStartSec=0
+ExecStart=/bin/sudo /home/${USERNAME}/.docker-smb/start-share.sh ${USERNAME} start
+ExecRestart=/bin/sudo /home/${USERNAME}/.docker-smb/start-share.sh ${USERNAME} restart
+ExecStop=/bin/sudo /home/${USERNAME}/.docker-smb/start-share.sh ${USERNAME} stop
+TimeoutStartSec=5
 
 [Install]
 WantedBy=multi-user.target" > "${SERVICE}"
