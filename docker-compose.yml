@@ -5,7 +5,7 @@ services:
     container_name: docker_smb
     tty: true
     # Name of your pc
-    hostname: HP
+    hostname: docker_smb
     network_mode: host
     build:
       context: .
