@@ -159,38 +159,6 @@ function change_userpass () {
     fi
 }
 
-function smbcfg () {
-    clear
-    echo
-    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
-    echo " #                                Changing smbconf                                     # "
-    echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
-
-    SMBCFG='/etc/samba/smb.conf'
-
-    if [[ -f "${SMBCFG}" ]]; then
-        echo
-        read -p "Copy and use the configuration contained in: ${SMBCFG} (y / n)? " CHOICE
-
-      case "${CHOICE}" in 
-        y|Y )
-          if cp "${SMBCFG}" "${CLONE_SMB_CONF}"; then
-              echo "    ${SMBCFG} configuration copied!"
-          else
-              echo "    Error copying ${SMBCFG} to ${CLONE_SMB_CONF}!"
-          fi
-          ;;
-        n|N )
-          echo "    The repository configuration will be used!"
-          ;;
-        * ) 
-          echo "  Invalid."
-          smbcfg
-          ;;
-      esac
-  fi
-}
-
 function build () {
     clear
     echo
@@ -269,7 +237,6 @@ case $1 in
         change_hostname
         change_smbuser
         change_userpass
-        smbcfg
         waitedit
     ;;
 esac
