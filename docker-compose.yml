@@ -12,10 +12,4 @@ services:
       shm_size: '100mb'
       dockerfile: Dockerfile
     volumes:
-      - /home/luiz/SMB/:/media/SMB:rw
-      - /home/luiz/:/media/HOME:rw
-      - /media/luiz/HD:/media/HD:rw
-      - /home/luiz/RetroPie/roms:/media/roms:rw
-      - /home/luiz/RetroPie/BIOS:/media/BIOS:rw
-      - /opt/retropie/configs:/media/configs:rw
-      - /home/luiz/RetroPie/splashscreens:/media/splashscreens:rw
+      - /media/hd/ps2:/media/ps2:rw
