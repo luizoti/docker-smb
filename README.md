@@ -1,5 +1,3 @@
-This repository needs to be updated, as soon as possible I will do it, but I think it should work.
-
 # docker-smb - Docker Standalone Samba Server
 
 Can be used to quick setup a simple Samba container in host network mode. It will run as if on host, so it can be accessed from other computers on the same network.
@@ -16,7 +14,7 @@ After the `Ubuntu/Kubuntu 20.04` update, samba was updated to versions `4.11.+` 
 
 With this scenario, devices that need SMB1 cannot connect.
 
-In my case the motivation for this container is that it became impossible to use Open PS2 Loader ([OPL](https://www.ps2-home.com/forum/viewtopic.php?t=3)) via SMB on Playstation 2 for using SMB1.
+In my case the motivation for this container is that it became impossible to use Open PS2 Loader ([Open-PS2-Loader Project](https://github.com/ps2homebrew/Open-PS2-Loader.git)) via SMB on Playstation 2 for using SMB1.
 
 # Container
 
