@@ -9,7 +9,8 @@ CLONE_DIR=/home/${USERNAME}/.docker-smb
 CLONE_SMB_CONF="${CLONE_DIR}/smb.conf"
 CLONE_COMPOSE_CONF="${CLONE_DIR}/docker-compose.yml"
 CLONE_DOCKER_FILE="${CLONE_DIR}/Dockerfile"
-function update () {
+
+function update() {
   sudo apt-get update 
   sudo apt-get upgrade -y
 }
@@ -48,7 +49,6 @@ if [[ ! $(which docker-compose) ]]; then
     # openssl  >>>>>>>>>>>>>>>>  openssl-dev
     # python3-pip >>>>>>>>>>>>>>>> py-pip
 
-    GIT_API="https://api.github.com"
     COMPOSE_PATH="/usr/local/bin/docker-compose"
     VERSION_FILE="docker-compose-$(uname -s)-$(uname -m)"
     PART_DOWNLOAD_URL="https://github.com/docker/compose/releases/download"
