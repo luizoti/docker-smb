@@ -6,15 +6,18 @@ FROM alpine:3.10
 ARG USER='luiz'
 # SMB and SYSTEM password
 ARG PASS='smbpass'
-ARG VERSION='4.11'
 
-RUN apk add --no-cache --update sudo \
-	'samba-common-tools<'${VERSION}'' \
-    'samba-client<'${VERSION}'' \
-    'samba-server<'${VERSION}''
+# install sudo
+RUN apk add --no-cache --update sudo
 
-RUN apk add --no-cache --update    # If your base image does not contain sudo.
-RUN adduser -D -s /bin/ash -u 1000 ${USER} && addgroup ${USER} root  # Grant sudo to the user
+# install necessary packages
+RUN sudo apk add samba-common-tools samba-client samba-server
+
+# create user
+RUN adduser -D -s /bin/ash -u 1000 ${USER}
+
+# add user to root group
+RUN addgroup ${USER} root
 RUN echo ''${USER}' ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN echo -ne ""${PASS}"\n"${PASS}"\n" | sudo smbpasswd -a -s ${USER}
 RUN echo -ne ""${PASS}"\n"${PASS}"\n" | sudo passwd ${USER}
