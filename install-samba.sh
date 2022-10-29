@@ -28,9 +28,9 @@ if [[ ! -d "${CLONE_DIR}" ]]; then
     echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
     echo " #                           Cloning docker-smb Repository                             # "
     echo " # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # "
-  git clone https://github.com/luizoti/docker-smb.git "${CLONE_DIR}"
-  echo
-  cd "${CLONE_DIR}"
+    git clone https://github.com/luizoti/docker-smb.git "${CLONE_DIR}"
+    echo
+    cd "${CLONE_DIR}"
 fi
 
 if [[ ! $(which docker-compose) ]]; then
