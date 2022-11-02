@@ -24,6 +24,16 @@ Alpine is a good choice because both the base image and the final image after in
 
 ![alt text](https://github.com/luizoti/docker-smb/blob/master/Screenshot_20200531_161811.png "sizes reference")
 
+# Security
+
+My recommendation is to use this project to mount shares that need to be SMBv1 and do not contain important files, remembering that SMBv1 has been discontinued.
+
+In this repository, I kept the share for PS2 ONLY.
+
+# What about other shares?
+
+In my current tests, it was possible to use Samba from `Host` and `Container` at the same time, but it generates incompatibilities with the OPL, the games appear, but crash when opening, maybe there is a way to fix it, but I haven't found it yet .
+
 # docker-compose.yml
 
 You need to edit the folders and volumes that will be mounted in the container.
@@ -41,6 +51,7 @@ The structure of volumes is:
 You need to setup the folders you want to share based on folders you previous setup in docker-compose.yml
 
 On docker-compose.yml volume:
+
 ```
   - /home/luiz/SMB/:/media/SMB:rw
 ```
@@ -52,6 +63,24 @@ In smb.conf:
     path = "/media/SMB"
 
 ```
+
+For PS2 (OPL) users:
+
+```
+
+IP Address Type : DHCP
+
+Addresss Type   : IP
+Address         : IP OF YOUR SERVER
+
+Share           : ps2
+User            : root
+Password        : <not set>
+```
+
+This OPL Config works with this smb repository config.
+
+
 # Installation
 
 #### I tried to make this script as simple as possible, but you still need the mount points and SMB shares manually.
