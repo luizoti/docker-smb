@@ -49,7 +49,7 @@ if [[ ! $(which docker-compose) ]]; then
     # openssl  >>>>>>>>>>>>>>>>  openssl-dev
     # python3-pip >>>>>>>>>>>>>>>> py-pip
 
-    COMPOSE_PATH="/usr/local/bin/docker-compose"
+    COMPOSE_PATH="/usr/bin/docker-compose"
     VERSION_FILE="docker-compose-$(uname -s)-$(uname -m)"
     PART_DOWNLOAD_URL="https://github.com/docker/compose/releases/download"
     REPO="docker/compose"
@@ -73,11 +73,10 @@ if [[ ! $(which docker-compose) ]]; then
     sudo curl -L "${COMPOSE_URL}" -o "${COMPOSE_PATH}"
     sleep 2
 
-    if [[ $(which docker-compose) ]]; then
+    if [[ -f $(which docker-compose) || -f "${COMPOSE_PATH}" ]]; then
         echo
-        sudo apt install python3-pip python-dev-is-python2 libffi-dev openssl gcc libc6-dev make -y
+        sudo apt install python3-pip python-dev-is-python3 libffi-dev openssl gcc libc6-dev make -y
         sudo chmod +x "${COMPOSE_PATH}"
-        sudo ln -s "${COMPOSE_PATH}" "/usr/bin/docker-compose"
     fi
 fi
 
